@@ -1,0 +1,3 @@
+export const carouselImg = [{ imgUrl: "https://mdbootstrap.com/img/Photos/Slides/img%20(22).jpg", title: "First slide label", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
+{ imgUrl: "https://mdbootstrap.com/img/Photos/Slides/img%20(15).jpg", title: "Secound slide label", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
+{ imgUrl: "https://mdbootstrap.com/img/Photos/Slides/img%20(23).jpg", title: "Third slide label", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." }]

@@ -1,65 +1,55 @@
-import React, { Component } from 'react'
+import React, { Component, useEffect, useState } from 'react'
 import CustomCarousel from '../components/CustomCarousel'
 import axios from "axios"
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Placeholder from 'react-bootstrap/Placeholder';
 import CardImg from 'react-bootstrap/esm/CardImg';
+import {carouselImg}  from '../constant/carouselImg';
 
-export default class Home extends Component {
-  constructor() {
-    super();
-    this.state = {
-      carouselData: [{ imgUrl: "https://mdbootstrap.com/img/Photos/Slides/img%20(22).jpg", title: "First slide label", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
-      { imgUrl: "https://mdbootstrap.com/img/Photos/Slides/img%20(15).jpg", title: "Secound slide label", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
-      { imgUrl: "https://mdbootstrap.com/img/Photos/Slides/img%20(23).jpg", title: "Third slide label", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." }]
-      , products: [],
-      loading: false,
-      update: false
-    };
+export default function Home(props) {
+  const[products, setProduct]=useState([]);
+  const [loading,setLoading]=useState(false);
+  const[carouselData,setCarouselData] =useState(carouselImg);
+  const[update,setUpdate]=useState(false);
+
+  const handleAddToCart= (produit)=>{
+    props.setCart([...props.cart,produit])
+    console.log(props.cart,"this cart")
   }
-  fetchAllProducts = () => {
+
+  const fetchAllProducts = () => {
     const response = axios.get("http://localhost:4000/products").then((res) => {
-      this.setState({
-        products: res.data,
-        loading: true
+        setProduct(res.data);
+        setLoading(true);
       })
-    })
       .catch((err) => { console.log(err) })
   }
-  handleDelete = (id) => {
+ const handleDelete = (id) => {
     const response = axios.delete(`http://localhost:4000/products/${id}`).then((res) => {
-      this.setState({
-        update: !this.state.update 
-      })
+    setUpdate(!update)
     }).catch((err) => { console.log(err) })
   }
-  componentDidMount() {
-    this.fetchAllProducts()
-  }
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.update !== prevState.update) {
-      this.fetchAllProducts()
-    }
-  }
 
-  render() {
-    console.log(this.state.update," update")
+ useEffect(()=>{
+    fetchAllProducts()
+  },[update])
     return (
       <div>
-        <CustomCarousel carouselData={this.state.carouselData} />
-        {this.state.loading === true ? (<div className='d-flex flex-wrap gap-4 justify-content-center mt-4'>
-          {this.state.products.map((elem, index) => (
+        <CustomCarousel carouselData={carouselImg} />
+        {loading === true ? (<div className='d-flex flex-wrap gap-4 justify-content-center mt-4'>
+          {products.map((elem, index) => (
             <Card style={{ width: '18rem' }} key={index} >
-              <Card.Img variant="top" src={elem.image} />
+              <Card.Img variant="top" src={elem.imageUrl} />
               <Card.Body>
                 <Card.Title>{elem.productName}</Card.Title>
+      
                 <Card.Text>
                   {elem.description}
                 </Card.Text>
                 <h5>{elem.price}</h5>
-                <Button variant="primary">buy</Button>
-                <Button variant="danger" onClick={() => this.handleDelete(elem.id)}>Delete</Button>
+                <Button variant="primary" onClick={()=>handleAddToCart(elem)}>add to cart</Button>
+                <Button variant="danger" onClick={() =>handleDelete(elem.id)}>Delete</Button>
               </Card.Body>
             </Card>
           ))}
@@ -87,4 +77,3 @@ export default class Home extends Component {
       </div>
     )
   }
-}
