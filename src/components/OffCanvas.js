@@ -14,9 +14,21 @@ import {
 } from "mdb-react-ui-kit";
 import Offcanvas from 'react-bootstrap/Offcanvas';
 export default function OffCanvas({ show, handleClose, cart, setCart }) {
+  const handleDelete = (produit)=>{
+    const filtredCard = cart.filter(item => item.id !== produit.id );
+    setCart(filtredCard);
+  }
+  
+   // bech nlawej fi woset el card 3al produit eli ena clicite 3lihe wa9teli nal9ahe nzidou el quantity +1 sion nkhalihe kima howa
+  const updateQuantity=(produit,newQuantity)=>{
+    const updated= cart.map(elem => elem.id === produit.id ? {...elem, quantity: newQuantity}: elem)
+    setCart(
+     updated
+    )
+  }
   return (
     <div>
-      <Offcanvas show={show} onHide={handleClose} style={{ width: "50%" }}>
+      <Offcanvas show={show} onHide={handleClose} style={{ width: "100%" }}>
         <Offcanvas.Header closeButton> </Offcanvas.Header>
         <Offcanvas.Body>
           <section className="h-100 h-custom" style={{ backgroundColor: "#eee" }}>
@@ -33,7 +45,7 @@ export default function OffCanvas({ show, handleClose, cart, setCart }) {
                                 Shopping Cart
                               </MDBTypography>
                               <MDBTypography className="mb-0 text-muted">
-                                {cart.length} products
+                                {cart.reduce((acc,elem)=>elem.quantity+acc,0)} products
                               </MDBTypography>
                             </div>
 
@@ -56,13 +68,13 @@ export default function OffCanvas({ show, handleClose, cart, setCart }) {
                               </MDBCol>
                               <MDBCol md="3" lg="3" xl="3" className="d-flex align-items-center">
                                 <MDBBtn color="link" className="px-2">
-                                  <MDBIcon fas icon="minus" />
+                                  <MDBIcon fas icon="minus" onClick={()=>updateQuantity(elem,elem.quantity-1)} />
                                 </MDBBtn>
 
-                                <MDBInput type="number" min="0" defaultValue={1} size="sm" />
+                                <MDBInput type="number" min="0" value={elem.quantity>0 ? elem.quantity : 0  } size="sm" />
 
                                 <MDBBtn color="link" className="px-2">
-                                  <MDBIcon fas icon="plus" />
+                                  <MDBIcon fas icon="plus" onClick={()=>updateQuantity(elem,elem.quantity+1)} />
                                 </MDBBtn>
                               </MDBCol>
                               <MDBCol md="3" lg="2" xl="2" className="text-end">
@@ -72,16 +84,13 @@ export default function OffCanvas({ show, handleClose, cart, setCart }) {
                               </MDBCol>
                               <MDBCol md="1" lg="1" xl="1" className="text-end">
                                 <a href="#!" className="text-muted">
-                                  <MDBIcon fas icon="times" />
+                                  <MDBIcon fas icon="times" onClick={()=>handleDelete(elem)}/>
                                 </a>
                               </MDBCol>
                             </MDBRow>
                             <hr className="my-4" />
                             </div>
                             ))}
-
-
-
                             <div className="pt-5">
                               <MDBTypography tag="h6" className="mb-0">
                                 <MDBCardText tag="a" href="#!" className="text-body">
@@ -102,9 +111,9 @@ export default function OffCanvas({ show, handleClose, cart, setCart }) {
 
                             <div className="d-flex justify-content-between mb-4">
                               <MDBTypography tag="h5" className="text-uppercase">
-                                items 3
+                                items {cart.reduce((acc,elem)=>elem.quantity+acc,0)}
                               </MDBTypography>
-                              <MDBTypography tag="h5">€ 132.00</MDBTypography>
+                              <MDBTypography tag="h5">{cart.reduce((acc,elem)=>(elem.price *elem.quantity)+acc,0)}</MDBTypography>
                             </div>
 
                             <MDBTypography tag="h5" className="text-uppercase mb-3">
@@ -134,7 +143,7 @@ export default function OffCanvas({ show, handleClose, cart, setCart }) {
                               <MDBTypography tag="h5" className="text-uppercase">
                                 Total price
                               </MDBTypography>
-                              <MDBTypography tag="h5">€ 137.00</MDBTypography>
+                              <MDBTypography tag="h5"></MDBTypography>
                             </div>
 
                             <MDBBtn color="dark" block size="lg">

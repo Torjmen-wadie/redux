@@ -38,12 +38,10 @@ export default function CustomNavBar(props) {
               <div className='position-relative d-inline-block mx-5 mt-3'>
                 <HiMiniShoppingCart size={35} className='m-3' onClick={handleShow} />
                 <MDBBadge color='danger' pill className='position-absolute translate-middle'>
-                  {props.cart.length}
+                  {props.cart.reduce((acc, elem)=>elem.quantity+acc ,0)}
 
                 </MDBBadge>
               </div>
-
-
               <Form.Control
                 type="search"
                 placeholder="Search"
