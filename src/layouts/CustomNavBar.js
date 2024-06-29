@@ -1,15 +1,20 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import { MDBBadge, MDBBtn } from 'mdb-react-ui-kit';
+import { MDBBadge } from 'mdb-react-ui-kit';
 import { HiMiniShoppingCart } from "react-icons/hi2";
 import OffCanvas from '../components/OffCanvas';
-export default function CustomNavBar(props) {
-  const [show, setShow] = useState(false);
+import { useNavigate } from 'react-router-dom';
+import { CartContext } from '../cartContext';
 
+export default function CustomNavBar() {
+
+  const {cart, setCart} = useContext(CartContext);
+  const [show, setShow] = useState(false);
+  const navigate = useNavigate();
   const handleClose = () => {
     setShow(false)
   };
@@ -28,9 +33,9 @@ export default function CustomNavBar(props) {
               style={{ maxHeight: '100px' }}
               navbarScroll
             >
-              <Nav.Link href="#action1" onClick={() => props.newViewFromApp("home")}>Home</Nav.Link>
-              <Nav.Link href="#action2" onClick={() => props.newViewFromApp("about")}>About</Nav.Link>
-              <Nav.Link href="#" onClick={() => props.newViewFromApp("contact")}>
+              <Nav.Link onClick={()=>navigate("/")}>Home</Nav.Link>
+              <Nav.Link  onClick={()=>navigate("/about")}>About</Nav.Link>
+              <Nav.Link onClick={()=>navigate("/contact")}>
                 Contact
               </Nav.Link>
             </Nav>
@@ -38,7 +43,7 @@ export default function CustomNavBar(props) {
               <div className='position-relative d-inline-block mx-5 mt-3'>
                 <HiMiniShoppingCart size={35} className='m-3' onClick={handleShow} />
                 <MDBBadge color='danger' pill className='position-absolute translate-middle'>
-                  {props.cart.reduce((acc, elem)=>elem.quantity+acc ,0)}
+                  {cart.reduce((acc, elem)=>elem.quantity+acc ,0)}
 
                 </MDBBadge>
               </div>
@@ -53,7 +58,7 @@ export default function CustomNavBar(props) {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      <OffCanvas handleClose={handleClose} show={show} cart={props.cart} setCart={props.setCart} />
+      <OffCanvas handleClose={handleClose} show={show}/>
     </div>
   )
 }

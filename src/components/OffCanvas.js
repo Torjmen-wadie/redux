@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import {
   MDBBtn,
   MDBCard,
@@ -13,18 +13,18 @@ import {
   MDBTypography,
 } from "mdb-react-ui-kit";
 import Offcanvas from 'react-bootstrap/Offcanvas';
-export default function OffCanvas({ show, handleClose, cart, setCart }) {
+import { CartContext } from '../cartContext';
+
+export default function OffCanvas({ show, handleClose }) {
+
+  const {cart,dispatch}= useContext(CartContext);
   const handleDelete = (produit)=>{
-    const filtredCard = cart.filter(item => item.id !== produit.id );
-    setCart(filtredCard);
+    dispatch({type:'REMOVE_ITEM',payload: {id:produit.id}})
   }
   
    // bech nlawej fi woset el card 3al produit eli ena clicite 3lihe wa9teli nal9ahe nzidou el quantity +1 sion nkhalihe kima howa
   const updateQuantity=(produit,newQuantity)=>{
-    const updated= cart.map(elem => elem.id === produit.id ? {...elem, quantity: newQuantity}: elem)
-    setCart(
-     updated
-    )
+    dispatch({type:'UPDATE_ITEM', payload:{id:produit.id,newQuantity }})
   }
   return (
     <div>

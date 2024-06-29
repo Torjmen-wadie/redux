@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from 'react'
+import React, { Component, useContext, useEffect, useState } from 'react'
 import CustomCarousel from '../components/CustomCarousel'
 import axios from "axios"
 import Card from 'react-bootstrap/Card';
@@ -6,6 +6,8 @@ import Button from 'react-bootstrap/Button';
 import Placeholder from 'react-bootstrap/Placeholder';
 import CardImg from 'react-bootstrap/esm/CardImg';
 import { carouselImg } from '../constant/carouselImg';
+import { CartContext } from '../cartContext';
+;
 
 export default function Home(props) {
   const [products, setProduct] = useState([]);
@@ -13,15 +15,13 @@ export default function Home(props) {
   const [carouselData, setCarouselData] = useState(carouselImg);
   const [update, setUpdate] = useState(false);
 
+  const {cart,dispatch} = useContext(CartContext);
+  
   const handleAddToCart = (produit) => {
-    const existingProduct = props.cart.find(item => item.id === produit.id);
-    if (existingProduct) {
-      props.setCart(props.cart.map(elem => elem.id === produit.id ? { ...elem, quantity: elem.quantity + 1 } : elem))
-    } else {
-      props.setCart([...props.cart, { ...produit, quantity: 1 }])
-    }
+      dispatch({type: "ADD_ITEM", payload : produit})
+      // when you call dispath: react call your reducer with the current state and the action you have provided
   }
-  console.log(props.cart, "this is cart")
+  console.log(cart, "this is cart")
   // on va filtrer sur card par id, si product.id === item.id, quantity =item.quantiy+1 sinon item
   // bech nlawej fi woet el cart kena l9ite element bech na3mel jomled wadie eli hiya stare 22 sinon bech nkhali le elem, quantity:1
   const fetchAllProducts = () => {
@@ -31,14 +31,14 @@ export default function Home(props) {
     })
       .catch((err) => { console.log(err) })
   }
-  useEffect(() => {
-    const savedItem = localStorage.getItem("cart", JSON.parse(localStorage.getItem("cart")))
-    if(savedItem.length) {props.setCart(savedItem)}
-  }, [])
+  // useEffect(() => {
+  //   const savedItem = JSON.parse(localStorage.getItem("cart"))
+  //   if(savedItem.length) {props.setCart(savedItem)}
+  // }, [])
   
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(props.cart))
-  }, [props.cart])
+    if(cart.length)localStorage.setItem("cart", JSON.stringify(cart))
+  }, [cart])
 
   const handleDelete = (id) => {
     const response = axios.delete(`http://localhost:4000/products/${id}`).then((res) => {
@@ -64,7 +64,7 @@ export default function Home(props) {
               </Card.Text>
               <h5>{elem.price}</h5>
               <Button variant="primary" onClick={() => handleAddToCart(elem)}>add to cart</Button>
-              <Button variant="danger" onClick={() => handleDelete(elem.id)}>Delete</Button>
+              <Button variant="danger"  onClick={()=>props.newViewFromApp("productDetails",elem)}>View more details</Button>
             </Card.Body>
           </Card>
         ))}
